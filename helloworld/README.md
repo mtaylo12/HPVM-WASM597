@@ -11,3 +11,8 @@ To run with wasmtime (https://wasmtime.dev/):
    - make clean
    - make hw.wasm
    - wasmtime hw.wasm
+
+Switching to the LLVM13 backend produces errors both in wasm standalone mode and html mode. In wasm standalone mode, the build fails with:
+
+- wasm-ld: error: unknown argument: --table-base=1
+- wasm-ld: error: unknown file type: /tmp/tmpejo2ohallibemscripten_js_symbols.so
