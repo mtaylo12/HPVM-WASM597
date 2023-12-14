@@ -7,7 +7,7 @@ To run hello world in a browser:
    - open a browser and connect to host (eg. http://miranda.cs.illinois.edu:8000/)
    - click on the html to run the program
 
-To run with wasmtime:
+To run with wasmtime (https://wasmtime.dev/):
    - make clean
    - make hw.wasm
    - wasmtime hw.wasm
