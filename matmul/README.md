@@ -1,0 +1,11 @@
+This Makefile is not functional, but used to outline the heterocpp steps.
+
+1) Compile heterocpp to llvm IR with HPVM clang. The biggest change here from the existing toolchain is to compile with --target=wasm32. This change breaks the necessary includes (written out in the Makefile), and the Makefile needs to be rewritten to include the relevant libraries from the emscripten sysroot instead of the local x86 libraries.
+
+2) Compile from LLVM IR to bitcode and further process bitcode with hcc (AMD compiler). With no changes to the hpvm codebase, hcc will fail with a “main function not found” error. Setting the wasm target in step 1 produces llvm IR with main renamed as "__main_argc_argv" and the hpvm checks for "main" therefore fail. As a temporary workaround here, I modified the two checks for "main" in hpvm/projects/hetero-c++/lib/HPVMCGenLocator.cpp and replaced main with "__main_argc_argv". Ater making this edit, this hetero-cpp library needs to be recompiled.
+
+3) Next, run the optimization pass (opt) and link in the hpvm-rt. This step compiles but throws a warning: Linking two modules of different data layouts. This is due to the fact that the hpvm-rt was not compiled for wasm. Aaron's comments on the issue are that this change might require changes to the cmake, but its not currently ocnfigured to be able to specify the runtime target.
+
+To approach this problem, I tried rebuilding all of HPVM specifying the target manually (target = WebAssembly at install script prompts - this sets -DLLVM_TARGETS_TO_BUILD to whatever you enter). This produced some include errors around the "algorithm.h" header file, which I resolved by manually including hpvm/llvm/tools/clang/test/Headers/Inputs/include. In general, I think the missing includes for wasm target should be added in hpvm/projects/hpvm-rt/CMakeLists.txt. I didn't make much more progress here.
+
+4) After linking, the last stage is to use emscripten to produce wasm from the final LLVM IR. This produces errors that look like version or parsing errors (like "expected ')' at end of argument list) and are likely related to the mismatched targets in step 3. 
