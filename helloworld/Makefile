@@ -1,5 +1,5 @@
 EMSCRIPTEN_ROOT=../../emscripten
-LLVM_ROOT=../../llvm/llvm-project
+LLVM_ROOT=../../llvm/llvm-13
 
 hw.html: hw.ll
 	$(EMSCRIPTEN_ROOT)/emcc $< -o $@
