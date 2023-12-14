@@ -1,16 +1,14 @@
-EMSDK_ROOT=/home/mayat4/emsdk
-HPVM_ROOT=/home/mayat4/hpvm/hpvm
-EMCC_FROM_SOURCE=/home/mayat4/emscripten/emcc
-WASMTIME=wasmtime
+EMSCRIPTEN_ROOT=../../emscripten
+LLVM_ROOT=../../llvm/llvm-project
 
 hw.html: hw.ll
-	$(EMCC_FROM_SOURCE) $< -o $@
+	$(EMSCRIPTEN_ROOT)/emcc $< -o $@
 
 hw.wasm: hw.ll
-	$(EMCC_FROM_SOURCE) $< -o $@
+	$(EMSCRIPTEN_ROOT)/emcc $< -o $@
 
 hw.ll: hw.cpp
-	$(EMSDK_ROOT)/upstream/bin/clang++ --target=wasm32-unknown-emscripten --sysroot=/home/mayat4/emsdk/upstream/emscripten/cache/sysroot -S -emit-llvm $< -c -o $@
+	$(LLVM_ROOT)/build/bin/clang++ --target=wasm32-unknown-emscripten --sysroot=$(EMSCRIPTEN_ROOT)/cache/sysroot -S -emit-llvm $< -c -o $@
 
 clean:
 	rm -rf hw.ll hw.wasm hw.html hw.js
